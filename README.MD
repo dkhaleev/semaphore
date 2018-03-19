@@ -1,5 +1,7 @@
-#esp8266 simple semaphore
+# esp8266 simple semaphore
 
-##Credits
+## Cedits:
+
 MQTT Client [[Losant](https://github.com/Losant/losant-mqtt-arduino)]
+
 Streamer Lib [[Mikal Hart](http://arduiniana.org/libraries/streaming/)]
