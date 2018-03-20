@@ -1,5 +1,5 @@
 /**
- * ESP8266 
+ * ESP8266 WiFi Controlled semaphore
 */
 #include "credentials.h"
 #include <HashMap.h>
@@ -27,7 +27,7 @@ void setup()
   //assign hashmap [index](pin, state value)
   hashMap[0](12, false); //green on witty-cloud
   hashMap[1](13, false); //blue ~
-  hashMap[2](15, false); //red
+  hashMap[2](15, false); //red ~
   
   //start serial for debug
   Serial.begin(115200);
