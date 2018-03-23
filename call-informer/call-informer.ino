@@ -2,7 +2,7 @@
    ESP8266 WiFi Controlled semaphore
 */
 #include "credentials.h"
-#include <HashMap.h>
+#include "HashMap.h"
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -58,6 +58,7 @@ void loop()
   server.handleClient();
   delay(50);
 }
+
 void HTTP_handleRoot(void) {
   //local reflection of statuses
   bool statuses[HASH_SIZE];
@@ -77,13 +78,11 @@ void HTTP_handleRoot(void) {
     <h1>WiFi Semaphore</h1>";
       for (int i = 0; i < HASH_SIZE; i++)
       {
-        bool status = statuses[i];
-        if (status)
-        {
-          out += "<span>true</span><br/>";
-        } else {
-          out += "<span>false</span><br/>";
-        }
+        //string-casted value of status for current cell
+        String status = statuses[i]?"true":"false";
+        //string-casted number of current cell
+        String cellNumber = String(hashMap.getIndexHash(i));
+        out += "<span>Cell #"+ cellNumber +": " + status + "</span><br/>";
       }
   out += "</body>\
 </html>";
