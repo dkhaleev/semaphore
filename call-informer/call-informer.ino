@@ -15,7 +15,6 @@ HashType<int, bool> hashRawArray[HASH_SIZE];
 //handle storage
 HashMap<int, bool> hashMap = HashMap<int, bool>( hashRawArray , HASH_SIZE );
 
-
 //Init web-server
 ESP8266WebServer server(80);
 
@@ -60,13 +59,22 @@ void loop()
 }
 
 void HTTP_handleRoot(void) {
-  //local reflection of statuses
+  //local reflection of statuses from hashMap or server.args()
   bool statuses[HASH_SIZE];
   for (int index = 0; index < HASH_SIZE; index++)
   {
     statuses[index] = hashMap[index].getValue();
   }
 
+//@todo: correct reflection to statuses
+  for (uint8_t i = 0; i<HASH_SIZE; i++) {
+    if (strncmp(server.arg(i).c_str(), "1",1) == 0){
+      statuses[i] = true;
+    } else {
+      statuses[i] = false;
+    }
+  }
+  
   String out = "";
   out =
     "<html>\
@@ -82,10 +90,17 @@ void HTTP_handleRoot(void) {
         String status = statuses[i]?"true":"false";
         //string-casted number of current cell
         String cellNumber = String(hashMap.getIndexHash(i));
-        out += "<span>Cell #"+ cellNumber +": " + status + "</span><br/>";
+        
+        out += "<span>Cell #"
+        + cellNumber 
+        + ": <a href=\"?"+i+"="+String(statuses[i]?"0":"1")+"\"> "
+        + status 
+        + "</a>"
+        + "</span><br/>";
       }
   out += "</body>\
 </html>";
   server.send ( 200, "text/html", out );
+  //@todo: add port triggering according to statuses reflection
 }
 
