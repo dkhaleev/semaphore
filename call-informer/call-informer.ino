@@ -73,35 +73,46 @@ void HTTP_handleRoot(void) {
   String out = "";
   out =
     "<html>\
-  <head>\
-    <meta charset=\"utf-8\" />\
-    <title>WiFi semaphore</title>\
-  </head>\
-  <body>\
-    <h1>WiFi Semaphore</h1>";
-      for (uint8_t i = 0; i < HASH_SIZE; i++)
-      {
-        //string-casted value of status for current cell
-        String status = statuses[i]?"true":"false";
-        //string-casted number of current cell
-        String cellNumber = String(hashMap.getIndexHash(i));
-        
-        out += "<span>Cell #"
-        + cellNumber 
-        + ": <a href=\"?";
-        for (uint8_t j = 0; j < HASH_SIZE; j++)
-        {
-          if(i == j)
-          {
-            out +=String(j)+"="+String(statuses[j]?"0":"1")+"&";
-          } else {
-            out +=String(j)+"="+String(statuses[j]?"1":"0")+"&";
-          }
-        }
-        out +="\">" + status+"</a></span><br/>";
-      }
-  out += "</body>\
-</html>";
+      <head>\
+        <meta charset=\"utf-8\" name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\
+        <title>WiFi semaphore</title>\
+        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css\" integrity=\"sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm\" crossorigin=\"anonymous\">\
+      </head>\
+      <body>\
+        <div class=\"container\">\
+          <div class=\"row\">\
+            <h1>WiFi Semaphore</h1>\
+          </div>\
+          <div class=\"container-fluid\"> ";      
+            for (uint8_t i = 0; i < HASH_SIZE; i++)
+            {
+              //string-casted value of status for current cell
+              String status = statuses[i]?"On":"Off";
+              //string-casted number of current cell
+              String cellNumber = String(hashMap.getIndexHash(i));
+              
+              out += "<div class=\"row\">\
+              <a class=\"btn "+String(statuses[i]?"btn-danger":"btn-success")+" \" href=\"?";
+              for (uint8_t j = 0; j < HASH_SIZE; j++)
+              {
+                if(i == j)
+                {
+                  out +=String(j)+"="+String(statuses[j]?"0":"1");
+                } else {
+                  out +=String(j)+"="+String(statuses[j]?"1":"0");
+                }
+  
+                if(j<HASH_SIZE)
+                {
+                  out +="&";
+                }
+              }
+              out +="\">Cell #"+cellNumber+" is " + status+"</a></div><br/>";
+            }
+        out += "</div>\
+        </div>\
+      </body>\
+    </html>";
   server.send ( 200, "text/html", out );
   for (uint8_t i = 0; i < HASH_SIZE; i++)
   {
