@@ -61,12 +61,7 @@ void loop()
 void HTTP_handleRoot(void) {
   //local reflection of statuses from hashMap or server.args()
   bool statuses[HASH_SIZE];
-  for (int index = 0; index < HASH_SIZE; index++)
-  {
-    statuses[index] = hashMap[index].getValue();
-  }
 
-//@todo: correct reflection to statuses
   for (uint8_t i = 0; i<HASH_SIZE; i++) {
     if (strncmp(server.arg(i).c_str(), "1",1) == 0){
       statuses[i] = true;
@@ -93,7 +88,6 @@ void HTTP_handleRoot(void) {
         
         out += "<span>Cell #"
         + cellNumber 
-//        + ": <a href=\"?"+i+"="+String(statuses[i]?"0":"1")+"\"> " + status + "</a>"
         + ": <a href=\"?";
         for (uint8_t j = 0; j < HASH_SIZE; j++)
         {
@@ -109,6 +103,11 @@ void HTTP_handleRoot(void) {
   out += "</body>\
 </html>";
   server.send ( 200, "text/html", out );
-  //@todo: add port triggering according to statuses reflection
+  for (uint8_t i = 0; i < HASH_SIZE; i++)
+  {
+    bool status = statuses[i];
+    hashMap[i].setValue(status);    
+    digitalWrite(hashMap[i].getHash(), status);    
+  }
 }
 
