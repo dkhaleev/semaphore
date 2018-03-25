@@ -84,7 +84,7 @@ void HTTP_handleRoot(void) {
   </head>\
   <body>\
     <h1>WiFi Semaphore</h1>";
-      for (int i = 0; i < HASH_SIZE; i++)
+      for (uint8_t i = 0; i < HASH_SIZE; i++)
       {
         //string-casted value of status for current cell
         String status = statuses[i]?"true":"false";
@@ -93,10 +93,18 @@ void HTTP_handleRoot(void) {
         
         out += "<span>Cell #"
         + cellNumber 
-        + ": <a href=\"?"+i+"="+String(statuses[i]?"0":"1")+"\"> "
-        + status 
-        + "</a>"
-        + "</span><br/>";
+//        + ": <a href=\"?"+i+"="+String(statuses[i]?"0":"1")+"\"> " + status + "</a>"
+        + ": <a href=\"?";
+        for (uint8_t j = 0; j < HASH_SIZE; j++)
+        {
+          if(i == j)
+          {
+            out +=String(j)+"="+String(statuses[j]?"0":"1")+"&";
+          } else {
+            out +=String(j)+"="+String(statuses[j]?"1":"0")+"&";
+          }
+        }
+        out +="\">" + status+"</a></span><br/>";
       }
   out += "</body>\
 </html>";
