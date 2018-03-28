@@ -24,7 +24,7 @@ void setup()
   hashMap[0](12, false); //green on witty-cloud
   hashMap[1](13, false); //blue ~
   hashMap[2](15, false); //red ~
-  
+
   //start serial for debug
   Serial.begin(115200);
   Serial.printf("\n\nFree memory %d\n", ESP.getFreeHeap());
@@ -47,8 +47,10 @@ void setup()
     server.onNotFound(HTTP_handleRoot);
     server.begin();
     Serial.println(WiFi.localIP());
+    blinkGreen();
   } else {
     Serial.printf("WiFi device init failure");
+    blinkRed();
   }
 }
 
@@ -58,18 +60,34 @@ void loop()
   delay(50);
 }
 
+void blinkGreen()
+{
+  digitalWrite(12, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(1000);               // wait for a second
+  digitalWrite(12, LOW);    // turn the LED off by making the voltage LOW
+  delay(1000);               // wait for a second
+}
+
+void blinkRed()
+{
+  digitalWrite(15, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(1000);               // wait for a second
+  digitalWrite(15, LOW);    // turn the LED off by making the voltage LOW
+  delay(1000);               // wait for a second
+}
+
 void HTTP_handleRoot(void) {
   //local reflection of statuses from hashMap or server.args()
   bool statuses[HASH_SIZE];
 
-  for (uint8_t i = 0; i<HASH_SIZE; i++) {
-    if (strncmp(server.arg(i).c_str(), "1",1) == 0){
+  for (uint8_t i = 0; i < HASH_SIZE; i++) {
+    if (strncmp(server.arg(i).c_str(), "1", 1) == 0) {
       statuses[i] = true;
     } else {
       statuses[i] = false;
     }
   }
-  
+
   String out = "";
   out =
     "<html>\
@@ -83,33 +101,33 @@ void HTTP_handleRoot(void) {
           <div class=\"row\">\
             <h1>WiFi Semaphore</h1>\
           </div>\
-          <div class=\"container-fluid\"> ";      
-            for (uint8_t i = 0; i < HASH_SIZE; i++)
-            {
-              //string-casted value of status for current cell
-              String status = statuses[i]?"On":"Off";
-              //string-casted number of current cell
-              String cellNumber = String(hashMap.getIndexHash(i));
-              
-              out += "<div class=\"row\">\
-              <a class=\"btn "+String(statuses[i]?"btn-danger":"btn-success")+" \" href=\"?";
-              for (uint8_t j = 0; j < HASH_SIZE; j++)
-              {
-                if(i == j)
-                {
-                  out +=String(j)+"="+String(statuses[j]?"0":"1");
-                } else {
-                  out +=String(j)+"="+String(statuses[j]?"1":"0");
-                }
-  
-                if(j<HASH_SIZE)
-                {
-                  out +="&";
-                }
-              }
-              out +="\">Cell #"+cellNumber+" is " + status+"</a></div><br/>";
-            }
-        out += "</div>\
+          <div class=\"container-fluid\"> ";
+  for (uint8_t i = 0; i < HASH_SIZE; i++)
+  {
+    //string-casted value of status for current cell
+    String status = statuses[i] ? "On" : "Off";
+    //string-casted number of current cell
+    String cellNumber = String(hashMap.getIndexHash(i));
+
+    out += "<div class=\"row\">\
+              <a class=\"btn " + String(statuses[i] ? "btn-danger" : "btn-success") + " \" href=\"?";
+    for (uint8_t j = 0; j < HASH_SIZE; j++)
+    {
+      if (i == j)
+      {
+        out += String(j) + "=" + String(statuses[j] ? "0" : "1");
+      } else {
+        out += String(j) + "=" + String(statuses[j] ? "1" : "0");
+      }
+
+      if (j < HASH_SIZE)
+      {
+        out += "&";
+      }
+    }
+    out += "\">Cell #" + cellNumber + " is " + status + "</a></div><br/>";
+  }
+  out += "</div>\
         </div>\
       </body>\
     </html>";
@@ -117,8 +135,8 @@ void HTTP_handleRoot(void) {
   for (uint8_t i = 0; i < HASH_SIZE; i++)
   {
     bool status = statuses[i];
-    hashMap[i].setValue(status);    
-    digitalWrite(hashMap[i].getHash(), status);    
+    hashMap[i].setValue(status);
+    digitalWrite(hashMap[i].getHash(), status);
   }
 }
 
