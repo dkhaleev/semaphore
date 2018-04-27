@@ -20,7 +20,7 @@ void setup(){
   radio.setPayloadSize(32);     //payload size Bytes
 
   radio.openWritingPipe(address[0]);   //0, open transmission pipeline
-  radio.setChannel(0x7f);  //select channel 
+  radio.setChannel(0x65);  //select channel 
 
   radio.setPALevel (RF24_PA_MIN); //TX power level. Possible options RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX
   radio.setDataRate (RF24_250KBPS); //Baudrate. RF24_2MBPS, RF24_1MBPS, RF24_250KBPS
