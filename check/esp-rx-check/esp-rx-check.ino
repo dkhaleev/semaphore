@@ -1,4 +1,4 @@
-upt#include <SPI.h>
+#include <SPI.h>
 #include "nRF24L01.h"
 #include "RF24.h"
 
@@ -14,10 +14,19 @@ RF24 radio(4, 15); //ESP-8266
 byte address[][6] = {"1Node","2Node","3Node","4Node","5Node","6Node"};  //возможные номера труб
 byte pipeNo, gotByte; 
 
+
+const byte interruptPin = 5;
+volatile byte interruptCounter = 0;
+int numberOfInterrupts = 0;
+
 void setup(){
   Serial.begin(9600);
-  pinMode(4,OUTPUT);
-  digitalWrite(4,0);
+  
+  pinMode(interruptPin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(interruptPin), handleInterrupt, FALLING);
+ 
+//  pinMode(4,OUTPUT);
+//  digitalWrite(4,0);
 
   radio.begin(); //активировать модуль
   radio.setAutoAck(0);         //режим подтверждения приёма, 1 вкл 0 выкл
@@ -37,6 +46,9 @@ void setup(){
   radio.startListening();  //начинаем слушать эфир, мы приёмный модуль
 }
 
+void handleInterrupt() {
+  interruptCounter++;
+}
 
 void loop() {
   int count = 0;
@@ -44,12 +56,22 @@ void loop() {
   while (millis() - timer < 2000) {
     while( radio.available(&pipeNo)){    // слушаем эфир со всех труб
       radio.read( &gotByte, 1 );         // чиатем входящий сигнал
-      delay(1)
+//      delay(1);
       count++;
     }    
   }
   Serial.println(count);
   String nums = String(round(count));
+
+    if(interruptCounter>0){
+ 
+      interruptCounter--;
+      numberOfInterrupts++;
+ 
+      Serial.print("An interrupt has occurred. Total: ");
+      Serial.println(numberOfInterrupts);
+  }
+  
 }
 
 

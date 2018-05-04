@@ -26,7 +26,7 @@ void setup()
   hashMap[2](15, false); //red ~
 
   //start serial for debug
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.printf("\n\nFree memory %d\n", ESP.getFreeHeap());
 
   //Init output
