@@ -1,9 +1,9 @@
 #include <SPI.h>
 #include "RF24.h"
 
-//RF24 radio(9,10); // ���������������� ������ �� ����� 9 � 10 ��� ���
+RF24 radio(9,10); // ���������������� ������ �� ����� 9 � 10 ��� ���
 //RF24 radio(9,53);// ��� ����
-RF24 radio(4,15); //ESP-8266
+//RF24 radio(4,15); //ESP-8266
 
 const uint8_t num_channels = 128;
 uint8_t values[num_channels];
