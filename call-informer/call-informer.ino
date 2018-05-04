@@ -1,12 +1,33 @@
 /**
    ESP8266 WiFi Controlled semaphore
 */
-#include "credentials.h"
-#include "HashMap.h"
+//WiFi stuff
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+//WiFi credentials
+#include "credentials.h"
+//service stuff
+#include "HashMap.h"
+
+//NRF stuff (RF24 lib)
+#include <SPI.h>
+#include "nRF24L01.h"
+#include "RF24.h"
+
+//SPI GPIO pins CE an CS on ESP-8266 WittyCloud
+RF24 radio(4, 15); //ESP-8266
+//SPI GPIO pins listing:
+//CE    => 4
+//CSN   => 15
+//SCK   => 14
+//MOSI  => 13
+//MISO  => 12
+//IRQ   => 5 @ToDo: wacth for me!!!
+
+byte address[][6] = {"1Node","2Node","3Node","4Node","5Node","6Node"};  //возможные номера труб
+byte pipeNo, gotByte;
 
 //HashMap storage for GPIOs and states
 const byte HASH_SIZE = 3; //number of outputs, sattelites
@@ -37,10 +58,12 @@ void setup()
   }
 
   //Connect to WiFi
-  WiFi.mode(WIFI_AP_STA);
+  WiFi.hostname(host);
+//  WiFi.mode(WIFI_AP_STA);
   WiFi.begin(ssid, password);
 
   if (WiFi.waitForConnectResult() == WL_CONNECTED) {
+
     //Run Web-server
     MDNS.begin(host);
     server.on("/", HTTP_handleRoot);
